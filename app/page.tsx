@@ -1,8 +1,15 @@
+import { ThemeSelector } from "@/components/layout/ThemeSelector";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-bg p-12">
-      <h1 className="font-serif text-4xl text-text tracking-tight mb-1">TrailFinder</h1>
-      <p className="font-mono text-sm text-text-muted mb-10">design token test · T-02</p>
+      <div className="flex items-start justify-between mb-10">
+        <div>
+          <h1 className="font-serif text-4xl text-text tracking-tight mb-1">TrailFinder</h1>
+          <p className="font-mono text-sm text-text-muted">design token test · T-02 / T-03</p>
+        </div>
+        <ThemeSelector />
+      </div>
 
       <div className="flex flex-wrap gap-4 mb-10">
         <Swatch bg="bg-surface" label="surface" border />
@@ -35,16 +42,6 @@ export default function Home() {
           early morning before the trails get crowded.
         </p>
       </div>
-
-      <p className="text-text-muted text-sm">
-        Toggle{" "}
-        <code className="font-mono text-accent bg-accent-soft px-1 rounded-sm">
-          data-theme=&quot;dark&quot;
-        </code>{" "}
-        on{" "}
-        <code className="font-mono text-accent bg-accent-soft px-1 rounded-sm">&lt;html&gt;</code>{" "}
-        in DevTools to verify dark mode.
-      </p>
     </main>
   );
 }
