@@ -14,14 +14,19 @@ function friendlyError(msg: string): string {
   return "Something went wrong. Please try again.";
 }
 
-export async function signIn(input: SignInInput): Promise<{ error: string }> {
+export async function signIn(
+  input: SignInInput,
+  redirectTo = "/"
+): Promise<{ error: string }> {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: input.email,
     password: input.password,
   });
   if (error) return { error: friendlyError(error.message) };
-  redirect("/");
+  // Only allow relative same-origin redirects
+  const dest = redirectTo.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : "/";
+  redirect(dest);
 }
 
 export async function signUp(input: SignUpInput): Promise<{ error: string }> {

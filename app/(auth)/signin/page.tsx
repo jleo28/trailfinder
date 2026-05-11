@@ -17,6 +17,7 @@ const URL_ERRORS: Record<string, string> = {
 function SignInContent() {
   const params = useSearchParams();
   const urlError = params.get("error");
+  const redirectTo = params.get("redirect") ?? "/";
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -32,7 +33,7 @@ function SignInContent() {
   const onSubmit = (data: SignInInput) => {
     setServerError(null);
     startTransition(async () => {
-      const result = await signIn(data);
+      const result = await signIn(data, redirectTo);
       if (result?.error) setServerError(result.error);
     });
   };
