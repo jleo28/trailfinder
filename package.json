@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:types": "npx supabase gen types typescript --linked | grep -v 'Initialising login role' | sed '/^<claude-code-hint/d' > lib/database.types.ts",
+    "seed": "npx tsx scripts/seed-trails.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
