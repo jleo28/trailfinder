@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -24,12 +22,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TrailFinder",
+  title: { default: "TrailFinder", template: "%s · TrailFinder" },
   description: "Find and log hikes in the LA area.",
 };
 
-// Runs synchronously before first paint to apply the correct data-theme,
-// preventing a flash of the wrong color scheme on hard reload.
 const themeScript = `(function(){
   try {
     var s=localStorage.getItem('theme')||'auto';
@@ -46,11 +42,7 @@ const themeScript = `(function(){
   }catch(e){}
 })();`;
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -59,11 +51,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-full bg-bg text-text font-sans flex flex-col">
-        <Header />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <Footer />
-      </body>
+      <body className="min-h-full bg-bg text-text font-sans flex flex-col">{children}</body>
     </html>
   );
 }
