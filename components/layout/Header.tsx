@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
 import { NavMobile } from "@/components/layout/NavMobile";
+import { AuthMenu, type AuthProfile } from "@/components/layout/AuthMenu";
 
 export const NAV_LINKS = [
   { href: "/trails", label: "Browse" },
@@ -12,8 +13,11 @@ export const NAV_LINKS = [
   { href: "/friends", label: "Friends" },
 ];
 
-export function Header() {
-  // Lazy init handles the edge case of a page restoring mid-scroll
+interface HeaderProps {
+  profile: AuthProfile | null;
+}
+
+export function Header({ profile }: HeaderProps) {
   const [scrolled, setScrolled] = useState(() =>
     typeof window !== "undefined" && window.scrollY > 48
   );
@@ -59,15 +63,7 @@ export function Header() {
           {/* Right: theme picker + auth + mobile trigger */}
           <div className="flex items-center gap-1.5">
             <ThemeSelector />
-
-            {/* Auth placeholder — replaced in T-09 */}
-            <Link
-              href="/signin"
-              className="hidden md:inline-flex h-8 items-center rounded-md bg-accent px-3 text-sm
-                         font-medium text-accent-on hover:bg-accent-hover transition-colors duration-[150ms]"
-            >
-              Sign in
-            </Link>
+            <AuthMenu profile={profile} />
 
             {/* Mobile hamburger */}
             <button
@@ -83,7 +79,7 @@ export function Header() {
         </div>
       </header>
 
-      <NavMobile open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <NavMobile open={mobileOpen} onClose={() => setMobileOpen(false)} profile={profile} />
     </>
   );
 }
