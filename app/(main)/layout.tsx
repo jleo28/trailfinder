@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CommandPalette } from "@/components/ui/CommandPalette";
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -28,6 +29,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       <Header profile={profile} />
       <div className="flex flex-1 flex-col">{children}</div>
       <Footer />
+      <CommandPalette />
     </>
   );
 }
