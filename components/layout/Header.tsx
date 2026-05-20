@@ -16,9 +16,10 @@ export const NAV_LINKS = [
 
 interface HeaderProps {
   profile: AuthProfile | null;
+  pendingRequestCount?: number;
 }
 
-export function Header({ profile }: HeaderProps) {
+export function Header({ profile, pendingRequestCount = 0 }: HeaderProps) {
   const [scrolled, setScrolled] = useState(() =>
     typeof window !== "undefined" && window.scrollY > 48
   );
@@ -54,9 +55,12 @@ export function Header({ profile }: HeaderProps) {
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-medium text-text-soft hover:text-text transition-colors duration-[150ms]"
+                className="relative text-sm font-medium text-text-soft hover:text-text transition-colors duration-[150ms]"
               >
                 {label}
+                {label === "Friends" && pendingRequestCount > 0 && (
+                  <span className="absolute -top-1 -right-2.5 w-2 h-2 rounded-full bg-danger" />
+                )}
               </Link>
             ))}
           </nav>

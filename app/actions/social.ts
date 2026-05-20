@@ -93,3 +93,83 @@ export async function deleteComment(
   revalidatePath(`/hikes/${hikeId}`);
   return { ok: true };
 }
+
+// ── sendFriendRequest ─────────────────────────────────────────────────────────
+
+export async function sendFriendRequest(
+  addresseeId: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+  if (user.id === addresseeId) return { ok: false, error: "Can't friend yourself." };
+
+  const { error } = await supabase
+    .from("friendships")
+    .insert({ requester_id: user.id, addressee_id: addresseeId });
+
+  if (error) {
+    if (error.code === "23505") return { ok: false, error: "Request already sent." };
+    return { ok: false, error: "Failed to send request." };
+  }
+
+  revalidatePath("/friends");
+  return { ok: true };
+}
+
+// ── respondToRequest ──────────────────────────────────────────────────────────
+
+export async function respondToRequest(
+  friendshipId: string,
+  accept: boolean
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  if (accept) {
+    const { error } = await supabase
+      .from("friendships")
+      .update({ status: "accepted", accepted_at: new Date().toISOString() })
+      .eq("id", friendshipId)
+      .eq("addressee_id", user.id);
+    if (error) return { ok: false, error: "Failed to accept." };
+  } else {
+    const { error } = await supabase
+      .from("friendships")
+      .delete()
+      .eq("id", friendshipId)
+      .eq("addressee_id", user.id);
+    if (error) return { ok: false, error: "Failed to decline." };
+  }
+
+  revalidatePath("/friends");
+  return { ok: true };
+}
+
+// ── removeFriend ──────────────────────────────────────────────────────────────
+
+export async function removeFriend(
+  friendshipId: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const { error } = await supabase
+    .from("friendships")
+    .delete()
+    .eq("id", friendshipId)
+    .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+
+  if (error) return { ok: false, error: "Failed to remove friend." };
+
+  revalidatePath("/friends");
+  return { ok: true };
+}
