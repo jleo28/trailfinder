@@ -92,7 +92,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .maybeSingle();
   if (!data) return {};
   const trailName = Array.isArray(data.trail) ? data.trail[0]?.name : (data.trail as { name: string } | null)?.name;
-  return { title: trailName ? `${trailName} · ${formatDate(data.hiked_at)}` : "Hike log" };
+  const title = trailName ? `${trailName} · ${formatDate(data.hiked_at)}` : "Hike log";
+  const ogImageUrl = `/api/og/hike/${id}`;
+  return {
+    title,
+    openGraph: {
+      title: `${title} · TrailFinder`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · TrailFinder`,
+      images: [ogImageUrl],
+    },
+  };
 }
 
 export default async function HikeDetailPage({ params }: Props) {
