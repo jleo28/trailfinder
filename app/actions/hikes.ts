@@ -4,6 +4,50 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { compressToWebP, ImageTooLargeError } from "@/lib/utils/image";
 
+// ── createHike ───────────────────────────────────────────────────────────────
+
+interface CreateHikeInput {
+  trail_id: string;
+  hiked_at: string; // ISO date string "YYYY-MM-DD"
+  duration_minutes?: number;
+  notes?: string;
+  conditions?: string;
+  visibility: "public" | "friends" | "private";
+}
+
+export async function createHike(
+  input: CreateHikeInput
+): Promise<{ ok: true; hikeId: string } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const { data, error } = await supabase
+    .from("hikes")
+    .insert({
+      user_id: user.id,
+      trail_id: input.trail_id,
+      hiked_at: input.hiked_at,
+      duration_minutes: input.duration_minutes ?? null,
+      notes: input.notes ?? null,
+      conditions: input.conditions ?? null,
+      visibility: input.visibility,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { ok: false, error: "Failed to create hike." };
+
+  revalidatePath("/feed");
+
+  return { ok: true, hikeId: data.id };
+}
+
+// ── uploadHikePhotos ─────────────────────────────────────────────────────────
+
+
 const MAX_PHOTOS_PER_HIKE = 10;
 
 type UploadSuccess = { ok: true; photos: { id: string; signedUrl: string }[] };
