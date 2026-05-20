@@ -4,13 +4,14 @@ import { DifficultyChip } from "@/components/trail/DifficultyChip";
 import { StatRow } from "@/components/trail/StatRow";
 import { TagList } from "@/components/trail/TagList";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { TrailMap } from "@/components/map/TrailMap";
 
 export default async function DevPage() {
   const supabase = await createClient();
   const { data: trails } = await supabase
     .from("trails")
     .select(
-      "id, slug, name, difficulty, distance_mi, elevation_gain_ft, route_type, tags, hero_photo_url"
+      "id, slug, name, difficulty, distance_mi, elevation_gain_ft, route_type, tags, hero_photo_url, trailhead_lat, trailhead_lng"
     )
     .limit(9);
 
@@ -18,8 +19,35 @@ export default async function DevPage() {
     <main className="max-w-[1200px] mx-auto px-6 py-16 space-y-16">
       <div>
         <h1 className="font-serif text-3xl font-medium text-text mb-1">Trail components</h1>
-        <p className="font-mono text-sm text-text-muted">T-11 acceptance check · toggle theme to verify both modes</p>
+        <p className="font-mono text-sm text-text-muted">
+          T-11 + T-12 acceptance check · toggle theme to verify both modes
+        </p>
       </div>
+
+      {/* Map */}
+      <section className="space-y-6">
+        <h2 className="text-xs font-medium tracking-[0.06em] uppercase text-text-muted">
+          Map — {trails?.length ?? 0} trail pins
+        </h2>
+        <div className="rounded-xl overflow-hidden border border-border" style={{ height: 480 }}>
+          <TrailMap
+            trails={
+              trails?.map((t) => ({
+                id: t.id,
+                slug: t.slug,
+                name: t.name,
+                difficulty: t.difficulty,
+                distance_mi: t.distance_mi,
+                elevation_gain_ft: t.elevation_gain_ft,
+                trailhead_lat: t.trailhead_lat,
+                trailhead_lng: t.trailhead_lng,
+                hero_photo_url: t.hero_photo_url,
+              })) ?? []
+            }
+            className="h-full w-full"
+          />
+        </div>
+      </section>
 
       {/* Primitives */}
       <section className="space-y-8">
@@ -27,7 +55,7 @@ export default async function DevPage() {
           Primitives
         </h2>
 
-        <div className="space-y-1">
+        <div>
           <p className="text-xs text-text-muted mb-3">DifficultyChip</p>
           <div className="flex items-center gap-3">
             <DifficultyChip difficulty="easy" />
@@ -36,17 +64,17 @@ export default async function DevPage() {
           </div>
         </div>
 
-        <div className="space-y-1">
+        <div>
           <p className="text-xs text-text-muted mb-3">StatRow</p>
           <StatRow distanceMi={4.2} elevationGainFt={850} difficulty="moderate" routeType="loop" />
         </div>
 
-        <div className="space-y-1">
+        <div>
           <p className="text-xs text-text-muted mb-3">TagList</p>
           <TagList tags={["loop", "dog-friendly", "views", "waterfall", "creek", "summit"]} />
         </div>
 
-        <div className="space-y-1">
+        <div>
           <p className="text-xs text-text-muted mb-3">Skeleton</p>
           <div className="space-y-2 max-w-sm">
             <Skeleton className="h-48 w-full" />
