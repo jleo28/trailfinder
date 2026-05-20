@@ -19,12 +19,25 @@ export type TrailCardFragment = Pick<
   | "hero_photo_url"
 >;
 
-export function TrailCard({ trail }: { trail: TrailCardFragment }) {
+export function TrailCard({
+  trail,
+  isSelected,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  trail: TrailCardFragment;
+  isSelected?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}) {
   return (
-    <Link href={`/trails/${trail.slug}`} className="group block">
+    <Link href={`/trails/${trail.slug}`} className="group block" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <article
-        className="bg-surface border border-border rounded-lg shadow-sm overflow-hidden
-                   transition-[transform,box-shadow] duration-[150ms] hover:-translate-y-0.5 hover:shadow-md"
+        className={[
+          "bg-surface border rounded-lg shadow-sm overflow-hidden",
+          "transition-[transform,box-shadow] duration-[150ms] hover:-translate-y-0.5 hover:shadow-md",
+          isSelected ? "border-accent ring-2 ring-accent shadow-md -translate-y-0.5" : "border-border",
+        ].join(" ")}
         style={{ transitionTimingFunction: "var(--ease-out)" }}
       >
         {/* Photo */}
