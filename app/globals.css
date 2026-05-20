@@ -167,6 +167,41 @@ body {
   border: 1px solid rgba(68, 62, 50, 0.6);
 }
 
+/* ─── User location marker ───────────────────────────────────────────────── */
+
+.user-location-dot {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.user-location-inner {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #3B82F6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+  z-index: 1;
+}
+
+.user-location-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.18);
+  animation: user-location-pulse 2s ease-out infinite;
+}
+
+@keyframes user-location-pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-location-ring { animation: none; }
+}
+
 /* ─── Form elements ──────────────────────────────────────────────────────── */
 
 input[type="range"] {

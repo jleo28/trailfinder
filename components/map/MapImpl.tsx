@@ -3,7 +3,7 @@
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { TrailMarker } from "./TrailMarker";
 import { MapControls } from "./MapControls";
 import type { TrailMapProps } from "./TrailMap";
@@ -72,6 +72,32 @@ function TrailRoute({ geometry }: { geometry: LineString }) {
   return null;
 }
 
+function UserLocationMarker() {
+  const map = useMap();
+  const [position, setPosition] = useState<[number, number] | null>(null);
+
+  useEffect(() => {
+    function onFound(e: L.LocationEvent) {
+      setPosition([e.latlng.lat, e.latlng.lng]);
+    }
+    map.on("locationfound", onFound);
+    return () => {
+      map.off("locationfound", onFound);
+    };
+  }, [map]);
+
+  if (!position) return null;
+
+  const icon = L.divIcon({
+    html: `<div class="user-location-dot"><div class="user-location-inner"></div><div class="user-location-ring"></div></div>`,
+    className: "",
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
+
+  return <Marker position={position} icon={icon} />;
+}
+
 export function MapImpl({
   trails,
   geometry,
@@ -105,6 +131,7 @@ export function MapImpl({
       {geometry?.coordinates?.length && <FitBounds geometry={geometry} />}
       {geometry?.coordinates?.length && <TrailRoute geometry={geometry} />}
 
+      <UserLocationMarker />
       <MapControls tileLayer={tileLayer} onTileLayerChange={setTileLayer} />
     </MapContainer>
   );
