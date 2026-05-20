@@ -167,6 +167,53 @@ body {
   border: 1px solid rgba(68, 62, 50, 0.6);
 }
 
+/* ─── Leaflet overrides ──────────────────────────────────────────────────── */
+
+/* Hide default Leaflet zoom control (we render our own in MapControls) */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Glass popup */
+.glass-popup .leaflet-popup-content-wrapper {
+  background: rgba(253, 251, 246, 0.94);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(221, 213, 197, 0.6);
+  box-shadow: var(--tf-shadow-md);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .glass-popup .leaflet-popup-content-wrapper {
+  background: rgba(31, 28, 22, 0.94);
+  border-color: rgba(68, 62, 50, 0.6);
+}
+
+.glass-popup .leaflet-popup-content {
+  margin: 0;
+  line-height: inherit;
+}
+
+.glass-popup .leaflet-popup-tip-container {
+  margin-top: -1px;
+}
+
+.glass-popup .leaflet-popup-tip {
+  background: rgba(253, 251, 246, 0.94);
+  border: none;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .glass-popup .leaflet-popup-tip {
+  background: rgba(31, 28, 22, 0.94);
+}
+
+.glass-popup .leaflet-popup-close-button {
+  display: none;
+}
+
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
