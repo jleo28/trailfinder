@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin as admin } from "@/lib/supabase/admin";
 import { DifficultyChip } from "@/components/trail/DifficultyChip";
 import { DeleteHikeButton } from "./DeleteHikeButton";
+import { Reactions, type ReactionSummary } from "@/components/hike/Reactions";
+import { Comments, type CommentData } from "@/components/hike/Comments";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -148,6 +150,51 @@ export default async function HikeDetailPage({ params }: Props) {
 
   const duration = formatDuration(hike.duration_minutes);
 
+  // ── Reactions ─────────────────────────────────────────────────────────────
+  const { data: rawReactions } = await supabase
+    .from("reactions")
+    .select("type, user_id, profile:profiles!reactions_user_id_fkey(display_name)")
+    .eq("hike_id", id);
+
+  const REACTION_TYPES = ["like", "fire", "summit"] as const;
+  const reactionSummaries: ReactionSummary[] = REACTION_TYPES.map((type) => {
+    const matching = (rawReactions ?? []).filter((r) => r.type === type);
+    type ProfileResult = { display_name: string };
+    return {
+      type,
+      count: matching.length,
+      hasReacted: matching.some((r) => r.user_id === user?.id),
+      topReactors: matching
+        .slice(0, 5)
+        .map((r) => {
+          const p = Array.isArray(r.profile) ? r.profile[0] : r.profile as ProfileResult | null;
+          return p?.display_name ?? "User";
+        }),
+    };
+  });
+
+  // ── Comments ──────────────────────────────────────────────────────────────
+  const { data: rawComments } = await supabase
+    .from("comments")
+    .select("id, text, created_at, profile:profiles!comments_user_id_fkey(id, username, display_name)")
+    .eq("hike_id", id)
+    .order("created_at", { ascending: true });
+
+  type CommentProfile = { id: string; username: string; display_name: string };
+  const comments: CommentData[] = (rawComments ?? []).map((c) => {
+    const p = Array.isArray(c.profile) ? c.profile[0] : c.profile as CommentProfile | null;
+    return {
+      id: c.id,
+      text: c.text,
+      created_at: c.created_at,
+      user: {
+        id: p?.id ?? "",
+        username: p?.username ?? "",
+        display_name: p?.display_name ?? "User",
+      },
+    };
+  });
+
   return (
     <div className="max-w-[900px] mx-auto px-6 py-12 space-y-10">
 
@@ -280,19 +327,20 @@ export default async function HikeDetailPage({ params }: Props) {
         </section>
       )}
 
-      {/* ── Reactions placeholder ───────────────────────────────────────── */}
+      {/* ── Reactions ──────────────────────────────────────────────────── */}
       <section>
-        <div className="rounded-lg border border-dashed border-border p-6 text-center">
-          <p className="text-sm text-text-muted">Reactions coming in T-21.</p>
-        </div>
+        <Reactions hikeId={id} reactions={reactionSummaries} isSignedIn={!!user} />
       </section>
 
-      {/* ── Comments placeholder ────────────────────────────────────────── */}
+      {/* ── Comments ────────────────────────────────────────────────────── */}
       <section>
-        <h2 className="font-serif text-xl font-medium text-text mb-4">Comments</h2>
-        <div className="rounded-lg border border-dashed border-border p-6 text-center">
-          <p className="text-sm text-text-muted">Comments coming in T-22.</p>
-        </div>
+        <h2 className="font-serif text-xl font-medium text-text mb-5">Comments</h2>
+        <Comments
+          hikeId={id}
+          initialComments={comments}
+          currentUserId={user?.id ?? null}
+          hikeOwnerId={hike.user_id}
+        />
       </section>
 
     </div>
