@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { TrailGrid } from "@/components/trail/TrailGrid";
 import { DifficultyChip } from "@/components/trail/DifficultyChip";
 import { FriendButton } from "@/components/social/FriendButton";
+import { TrailPassport, type StampData } from "@/components/profile/TrailPassport";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -109,6 +110,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
 
   let recentHikes: HikeRow[] = [];
   let uniqueTrails: Parameters<typeof TrailGrid>[0]["trails"] = [];
+  let stamps: StampData[] = [];
 
   if (tab === "hikes" || tab === "trails") {
     const { data: hikes } = await supabase
@@ -132,6 +134,34 @@ export default async function ProfilePage({ params, searchParams }: Props) {
           return true;
         }) as Parameters<typeof TrailGrid>[0]["trails"];
     }
+  }
+
+  if (tab === "stamps") {
+    // Fetch all hikes ordered by hiked_at ascending so we keep the first completion
+    // date per trail (earliest stamp date wins).
+    const { data: stampHikes } = await supabase
+      .from("hikes")
+      .select("trail_id, hiked_at, trail:trails!hikes_trail_id_fkey(name, slug)")
+      .eq("user_id", profile.id)
+      .order("hiked_at", { ascending: true });
+
+    type StampHike = {
+      trail_id: string;
+      hiked_at: string;
+      trail: { name: string; slug: string } | { name: string; slug: string }[] | null;
+    };
+    const seen = new Set<string>();
+    stamps = ((stampHikes ?? []) as StampHike[])
+      .filter((h) => {
+        if (!h.trail_id || seen.has(h.trail_id)) return false;
+        seen.add(h.trail_id);
+        return true;
+      })
+      .map((h) => {
+        const t = Array.isArray(h.trail) ? h.trail[0] : h.trail;
+        return t ? { trailName: t.name, trailSlug: t.slug, hikedAt: h.hiked_at } : null;
+      })
+      .filter((s): s is StampData => s !== null);
   }
 
   const tabs: { id: Tab; label: string }[] = [
@@ -287,12 +317,8 @@ export default async function ProfilePage({ params, searchParams }: Props) {
         </div>
       )}
 
-      {/* ── Stamps tab (placeholder for T-31) ────────────────────────── */}
-      {tab === "stamps" && (
-        <div className="rounded-lg border border-dashed border-border p-12 text-center">
-          <p className="text-sm text-text-muted">Trail passport stamps coming in T-31.</p>
-        </div>
-      )}
+      {/* ── Stamps tab ────────────────────────────────────────────────── */}
+      {tab === "stamps" && <TrailPassport stamps={stamps} />}
 
     </div>
   );
