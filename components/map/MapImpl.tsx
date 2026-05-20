@@ -24,6 +24,17 @@ const TILE_ATTRIBUTION = {
 
 type LineString = { type: "LineString"; coordinates: [number, number][] };
 
+function FitBounds({ geometry }: { geometry: LineString }) {
+  const map = useMap();
+  useEffect(() => {
+    const bounds = L.geoJSON(geometry as GeoJSON.GeoJsonObject).getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15, animate: false });
+    }
+  }, [map, geometry]);
+  return null;
+}
+
 function TrailRoute({ geometry }: { geometry: LineString }) {
   const map = useMap();
 
@@ -91,6 +102,7 @@ export function MapImpl({
         />
       ))}
 
+      {geometry?.coordinates?.length && <FitBounds geometry={geometry} />}
       {geometry?.coordinates?.length && <TrailRoute geometry={geometry} />}
 
       <MapControls tileLayer={tileLayer} onTileLayerChange={setTileLayer} />
