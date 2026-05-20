@@ -90,16 +90,21 @@ function HikeLogForm() {
     },
   });
 
-  // Restore from sessionStorage
+  // Restore from sessionStorage (draft takes priority over default preference)
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(SESSION_KEY);
-      if (!saved) return;
-      const parsed = JSON.parse(saved) as Partial<FormValues>;
-      (Object.keys(parsed) as (keyof FormValues)[]).forEach((k) => {
-        const v = parsed[k];
-        if (v !== undefined) setValue(k, v as string);
-      });
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<FormValues>;
+        (Object.keys(parsed) as (keyof FormValues)[]).forEach((k) => {
+          const v = parsed[k];
+          if (v !== undefined) setValue(k, v as string);
+        });
+      } else {
+        // No draft — apply default visibility preference from settings
+        const pref = localStorage.getItem("hike-visibility-default") as FormValues["visibility"] | null;
+        if (pref) setValue("visibility", pref);
+      }
     } catch {}
   }, [setValue]);
 
