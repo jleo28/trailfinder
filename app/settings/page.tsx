@@ -2,10 +2,21 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { ProfileEditForm } from "@/components/settings/ProfileEditForm";
+import { ThemePreference } from "@/components/settings/ThemePreference";
 import { VisibilityPreference } from "@/components/settings/VisibilityPreference";
+import { DeleteAccount } from "@/components/settings/DeleteAccount";
 import { signOut } from "@/app/actions/auth";
 
 export const metadata: Metadata = { title: "Settings" };
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-xs font-medium tracking-[0.06em] uppercase text-text-muted mb-4">
+      {children}
+    </h2>
+  );
+}
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -23,57 +34,65 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-lg mx-auto px-6 py-12 space-y-12">
-      <h1 className="font-serif text-3xl font-medium text-text">Settings</h1>
-
-      {/* Profile summary */}
-      <section className="space-y-4">
-        <h2 className="text-xs font-medium tracking-[0.06em] uppercase text-text-muted">
-          Profile
-        </h2>
-        <div className="rounded-lg border border-border bg-surface px-5 py-4 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium text-text">{profile?.display_name}</p>
-            <p className="text-xs text-text-muted">@{profile?.username}</p>
-          </div>
+      <div className="flex items-center justify-between">
+        <h1 className="font-serif text-3xl font-medium text-text">Settings</h1>
+        {profile?.username && (
           <Link
-            href={`/u/${profile?.username}`}
-            className="text-xs text-accent hover:text-accent-hover transition-colors shrink-0"
+            href={`/u/${profile.username}`}
+            className="text-xs text-accent hover:text-accent-hover transition-colors"
           >
             View profile →
           </Link>
-        </div>
-        <p className="text-xs text-text-muted">
-          Full profile editing (avatar, bio, location) coming in a future update.
-        </p>
+        )}
+      </div>
+
+      {/* ── Profile ────────────────────────────────────────────────── */}
+      <section>
+        <SectionHeader>Profile</SectionHeader>
+        <ProfileEditForm
+          initialValues={{
+            display_name: profile?.display_name ?? "",
+            bio: profile?.bio ?? null,
+            location: profile?.location ?? null,
+            avatar_url: profile?.avatar_url ?? null,
+          }}
+        />
       </section>
 
-      {/* Default hike visibility */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xs font-medium tracking-[0.06em] uppercase text-text-muted mb-1">
-            Default hike visibility
-          </h2>
-          <p className="text-xs text-text-muted">
-            Applied to new hikes when you log them. You can always override per hike.
-          </p>
-        </div>
+      {/* ── Theme ──────────────────────────────────────────────────── */}
+      <section>
+        <SectionHeader>Theme</SectionHeader>
+        <ThemePreference />
+      </section>
+
+      {/* ── Default hike visibility ────────────────────────────────── */}
+      <section>
+        <SectionHeader>Default hike visibility</SectionHeader>
+        <p className="text-xs text-text-muted mb-4">
+          Applied when you log a new hike. Override per hike in the log form.
+        </p>
         <VisibilityPreference />
       </section>
 
-      {/* Sign out */}
+      {/* ── Account ────────────────────────────────────────────────── */}
       <section className="space-y-4">
-        <h2 className="text-xs font-medium tracking-[0.06em] uppercase text-text-muted">
-          Account
-        </h2>
+        <SectionHeader>Account</SectionHeader>
         <form action={signOut}>
           <button
             type="submit"
             className="px-4 py-2 rounded-md border border-border text-text-soft text-sm
-                       hover:bg-surface-muted hover:text-danger transition-colors duration-[150ms]"
+                       hover:bg-surface-muted transition-colors duration-[150ms]"
           >
             Sign out
           </button>
         </form>
+        <div className="pt-4 border-t border-border">
+          <p className="text-xs text-text-muted mb-3">
+            Deletes your account and all hikes. Photos may remain in storage until
+            manually cleaned up via the Supabase dashboard.
+          </p>
+          <DeleteAccount />
+        </div>
       </section>
     </div>
   );
