@@ -45,6 +45,29 @@ export async function createHike(
   return { ok: true, hikeId: data.id };
 }
 
+// ── deleteHike ───────────────────────────────────────────────────────────────
+
+export async function deleteHike(
+  id: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const { error } = await supabase
+    .from("hikes")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) return { ok: false, error: "Failed to delete hike." };
+
+  revalidatePath("/feed");
+  return { ok: true };
+}
+
 // ── uploadHikePhotos ─────────────────────────────────────────────────────────
 
 
