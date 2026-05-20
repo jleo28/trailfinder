@@ -167,6 +167,12 @@ body {
   border: 1px solid rgba(68, 62, 50, 0.6);
 }
 
+/* ─── Form elements ──────────────────────────────────────────────────────── */
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
 /* ─── Leaflet overrides ──────────────────────────────────────────────────── */
 
 /* Hide default Leaflet zoom control (we render our own in MapControls) */
