@@ -34,11 +34,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("trails")
-    .select("name, description, hero_photo_url")
+    .select("name, description")
     .eq("slug", slug)
     .maybeSingle();
 
   if (!data) return {};
+
+  const ogImageUrl = `/api/og/trail/${slug}`;
 
   return {
     title: data.name,
@@ -46,7 +48,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${data.name} · TrailFinder`,
       description: data.description ?? undefined,
-      images: data.hero_photo_url ? [{ url: data.hero_photo_url, width: 1200 }] : [],
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${data.name} · TrailFinder`,
+      description: data.description ?? undefined,
+      images: [ogImageUrl],
     },
   };
 }
