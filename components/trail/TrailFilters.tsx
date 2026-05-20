@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, LocateFixed, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const DIFFICULTIES = [
@@ -29,13 +29,26 @@ interface Props {
   onChange: (updates: Record<string, string | string[] | null>) => void;
   isFetching?: boolean;
   totalCount: number;
+  sortNearest?: boolean;
+  locationLoading?: boolean;
+  locationError?: string | null;
+  onSortNearestToggle?: () => void;
 }
 
 function formatTag(tag: string) {
   return tag.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
-export function TrailFilters({ filters, onChange, isFetching, totalCount }: Props) {
+export function TrailFilters({
+  filters,
+  onChange,
+  isFetching,
+  totalCount,
+  sortNearest,
+  locationLoading,
+  locationError,
+  onSortNearestToggle,
+}: Props) {
   const [localDistance, setLocalDistance] = useState(filters.distanceMax);
   const [localElevation, setLocalElevation] = useState(filters.elevationMax);
 
@@ -82,6 +95,32 @@ export function TrailFilters({ filters, onChange, isFetching, totalCount }: Prop
           </button>
         )}
       </div>
+
+      {/* Sort by nearest */}
+      {onSortNearestToggle && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onSortNearestToggle}
+            disabled={locationLoading}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors duration-[150ms]",
+              sortNearest
+                ? "bg-accent text-accent-on"
+                : "bg-surface-muted text-text-soft hover:bg-surface"
+            )}
+          >
+            {locationLoading ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <LocateFixed className="w-3 h-3" strokeWidth={1.5} />
+            )}
+            Near me
+          </button>
+          {locationError && (
+            <span className="text-xs text-danger">{locationError}</span>
+          )}
+        </div>
+      )}
 
       {/* Difficulty */}
       <div className="space-y-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
@@ -8,6 +8,8 @@ import { TrailMap } from "@/components/map/TrailMap";
 import { TrailGrid } from "@/components/trail/TrailGrid";
 import { TrailFilters, type FilterState } from "@/components/trail/TrailFilters";
 import { useUrlState } from "@/lib/hooks/useUrlState";
+import { useGeolocation } from "@/lib/hooks/useGeolocation";
+import { haversineDistance } from "@/lib/utils";
 import type { TrailCardFragment } from "./TrailCard";
 
 type BrowseTrail = TrailCardFragment & {
@@ -53,8 +55,10 @@ async function fetchTrails(filters: FilterState): Promise<BrowseTrail[]> {
 export function TrailBrowse({ initialTrails }: { initialTrails: BrowseTrail[] }) {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"map" | "list">("map");
+  const [sortNearest, setSortNearest] = useState(false);
   const searchParams = useSearchParams();
   const { setParams } = useUrlState();
+  const geo = useGeolocation();
 
   const filters = parseFilters(searchParams);
 
@@ -64,7 +68,25 @@ export function TrailBrowse({ initialTrails }: { initialTrails: BrowseTrail[] })
     initialData: initialTrails,
   });
 
-  const trailPins = trails.map((t) => ({
+  const sortedTrails = useMemo(() => {
+    if (!sortNearest || !geo.coords) return trails;
+    return [...trails].sort((a, b) => {
+      const da = haversineDistance(geo.coords![0], geo.coords![1], a.trailhead_lat, a.trailhead_lng);
+      const db = haversineDistance(geo.coords![0], geo.coords![1], b.trailhead_lat, b.trailhead_lng);
+      return da - db;
+    });
+  }, [trails, sortNearest, geo.coords]);
+
+  function handleSortNearestToggle() {
+    if (!sortNearest && !geo.coords) {
+      geo.request();
+      setSortNearest(true);
+    } else {
+      setSortNearest((s) => !s);
+    }
+  }
+
+  const trailPins = sortedTrails.map((t) => ({
     id: t.id,
     slug: t.slug,
     name: t.name,
@@ -126,16 +148,20 @@ export function TrailBrowse({ initialTrails }: { initialTrails: BrowseTrail[] })
             filters={filters}
             onChange={setParams}
             isFetching={isFetching}
-            totalCount={trails.length}
+            totalCount={sortedTrails.length}
+            sortNearest={sortNearest && !!geo.coords}
+            locationLoading={geo.loading}
+            locationError={geo.error}
+            onSortNearestToggle={handleSortNearestToggle}
           />
           <div className="p-5">
-            {trails.length === 0 ? (
+            {sortedTrails.length === 0 ? (
               <p className="text-sm text-text-muted text-center py-16">
                 No trails match these filters.
               </p>
             ) : (
               <TrailGrid
-                trails={trails}
+                trails={sortedTrails}
                 variant="list"
                 selectedSlug={selectedSlug}
                 onTrailHover={setSelectedSlug}
