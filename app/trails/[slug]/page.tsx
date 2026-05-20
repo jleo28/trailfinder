@@ -55,6 +55,10 @@ export default async function TrailDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
 
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+
   const { data: trail } = await supabase
     .from("trails")
     .select("*")
@@ -71,6 +75,54 @@ export default async function TrailDetailPage({ params }: Props) {
     .limit(4);
 
   const geometry = isLineString(trail.geometry) ? trail.geometry : null;
+
+  // ── Friends who hiked this (T-26) ─────────────────────────────────────────
+  type FriendHiker = {
+    hikeId: string;
+    hikedAt: string;
+    userId: string;
+    displayName: string;
+    username: string;
+    avatarUrl: string | null;
+  };
+  let friendHikers: FriendHiker[] = [];
+
+  if (viewer) {
+    const { data: friendships } = await supabase
+      .from("friendships")
+      .select("requester_id, addressee_id")
+      .or(`requester_id.eq.${viewer.id},addressee_id.eq.${viewer.id}`)
+      .eq("status", "accepted");
+
+    const friendIds = (friendships ?? []).map((f) =>
+      f.requester_id === viewer.id ? f.addressee_id : f.requester_id
+    );
+
+    if (friendIds.length > 0) {
+      const { data: fhikes } = await supabase
+        .from("hikes")
+        .select(
+          "id, hiked_at, user_id, profile:profiles!hikes_user_id_fkey(id, username, display_name, avatar_url)"
+        )
+        .eq("trail_id", trail.id)
+        .in("user_id", friendIds)
+        .order("hiked_at", { ascending: false })
+        .limit(10);
+
+      type FHProfile = { id: string; username: string; display_name: string; avatar_url: string | null };
+      friendHikers = (fhikes ?? []).map((h) => {
+        const p = Array.isArray(h.profile) ? h.profile[0] : h.profile as FHProfile | null;
+        return {
+          hikeId: h.id,
+          hikedAt: h.hiked_at,
+          userId: h.user_id,
+          displayName: p?.display_name ?? "Friend",
+          username: p?.username ?? "",
+          avatarUrl: p?.avatar_url ?? null,
+        };
+      });
+    }
+  }
 
   const allPhotos = [
     ...(trail.hero_photo_url ? [{ src: trail.hero_photo_url, alt: trail.name }] : []),
@@ -211,13 +263,70 @@ export default async function TrailDetailPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Friends who hiked this placeholder */}
-        <section>
-          <h2 className="font-serif text-2xl font-medium text-text mb-4">Friends who hiked this</h2>
-          <div className="rounded-lg border border-dashed border-border p-10 text-center">
-            <p className="text-sm text-text-muted">Friend activity coming in T-26.</p>
-          </div>
-        </section>
+        {/* Friends who hiked this */}
+        {friendHikers.length > 0 && (
+          <section>
+            <h2 className="font-serif text-2xl font-medium text-text mb-4">Friends who hiked this</h2>
+            <details className="group">
+              <summary className="flex items-center gap-3 cursor-pointer list-none">
+                {/* Avatar stack */}
+                <div className="flex -space-x-2">
+                  {friendHikers.slice(0, 5).map((h) => (
+                    <div
+                      key={h.userId}
+                      className="w-8 h-8 rounded-full overflow-hidden bg-accent-soft ring-2 ring-surface flex items-center justify-center"
+                    >
+                      {h.avatarUrl ? (
+                        <Image
+                          src={h.avatarUrl}
+                          alt={h.displayName}
+                          width={32}
+                          height={32}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="text-accent text-xs font-medium">
+                          {h.displayName.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-text-soft">
+                  <span className="font-medium text-text">
+                    {friendHikers
+                      .slice(0, 2)
+                      .map((h) => h.displayName)
+                      .join(", ")}
+                    {friendHikers.length > 2 && ` +${friendHikers.length - 2}`}
+                  </span>{" "}
+                  hiked this
+                  <span className="ml-2 text-text-muted text-xs group-open:hidden">▼</span>
+                  <span className="ml-2 text-text-muted text-xs hidden group-open:inline">▲</span>
+                </p>
+              </summary>
+              <div className="mt-4 space-y-2 pl-2">
+                {friendHikers.map((h) => (
+                  <Link
+                    key={h.hikeId}
+                    href={`/hikes/${h.hikeId}`}
+                    className="flex items-center gap-2 text-sm text-text-soft hover:text-accent transition-colors"
+                  >
+                    <span className="font-medium text-text">{h.displayName}</span>
+                    <span className="text-text-muted font-mono text-xs">
+                      {new Date(h.hikedAt + "T12:00:00").toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span className="text-accent text-xs">→</span>
+                  </Link>
+                ))}
+              </div>
+            </details>
+          </section>
+        )}
 
       </div>
     </div>
