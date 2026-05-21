@@ -9,8 +9,8 @@ export function Footer() {
           <p className="text-sm text-text-muted">
             Original CSCI-201 team:{" "}
             <span className="text-text-soft">
-              Joseph Leo &amp; teammates
-              {/* Full names added in T-35 with teammates' permission */}
+              Evan Adami, Ibsa Abadiga, Logan Lusher, Lucas Jerry,
+              Malachi Dewitt, Nicolo Naoni, Yaphet Bekele &amp; Joseph Leo
             </span>
           </p>
         </div>
