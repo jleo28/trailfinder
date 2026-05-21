@@ -49,7 +49,14 @@ Deploys to Vercel. See `.env.local.example` for required environment variables.
 
 This project is a ground-up rebuild of a group final project originally built for CSCI-201 (Systems Programming) at USC. The original concept and features were designed collaboratively by the team:
 
-- *(teammates — to be filled in with permission)*
+- Evan Adami
+- Ibsa Abadiga
+- Logan Lusher
+- Lucas Jerry
+- Malachi Dewitt
+- Nicolo Naoni
+- Yaphet Bekele
+- Joseph Leo
 
 Rebuilt by [Joseph Leo](https://jleo.me).
 
