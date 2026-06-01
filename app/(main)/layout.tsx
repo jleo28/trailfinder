@@ -35,8 +35,19 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
   return (
     <>
+      {/* Skip navigation — visually hidden, appears on keyboard focus */}
+      <a
+        href="#main-content"
+        className="absolute left-4 top-4 z-[200] -translate-y-20 rounded-md bg-accent px-4 py-2.5
+                   text-sm font-medium text-accent-on shadow-lg
+                   focus:translate-y-0 transition-transform duration-[150ms]"
+      >
+        Skip to main content
+      </a>
       <Header profile={profile} pendingRequestCount={pendingRequestCount} />
-      <div className="flex flex-1 flex-col">{children}</div>
+      <main id="main-content" className="flex flex-1 flex-col">
+        {children}
+      </main>
       <Footer />
       <CommandPalette />
     </>
