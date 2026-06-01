@@ -30,11 +30,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("display_name")
+    .select("display_name, bio")
     .eq("username", username)
     .maybeSingle();
   if (!data) return {};
-  return { title: `${data.display_name} (@${username})` };
+
+  const title = `${data.display_name} (@${username})`;
+  const description =
+    data.bio ?? `${data.display_name}'s hiking profile on TrailFinder.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} · TrailFinder`,
+      description,
+    },
+    twitter: {
+      card: "summary",
+      title: `${title} · TrailFinder`,
+      description,
+    },
+  };
 }
 
 export default async function ProfilePage({ params, searchParams }: Props) {
