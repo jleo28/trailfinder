@@ -255,6 +255,23 @@ input[type="range"] {
   display: none;
 }
 
+/* ── Focus rings — keyboard navigation ───────────────────────────────────── */
+/* Sage accent ring on all focusable elements. :focus-visible means it only  */
+/* appears for keyboard/sequential navigation, never for mouse clicks.        */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Inputs and textareas express focus via their own border + ring treatment.  */
+/* Remove the global outline so they don't double-render a focus indicator.   */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -264,5 +281,16 @@ input[type="range"] {
     animation-iteration-count: 1 !important;
     transition-duration: 100ms !important;
     transition-delay: 0ms !important;
+  }
+
+  /* Disable translate/rotate/scale hover effects — keep opacity transitions.  */
+  /* This targets the Tailwind hover-lift pattern used on cards and stamps.    */
+  *:hover,
+  *:focus {
+    --tw-translate-x: 0 !important;
+    --tw-translate-y: 0 !important;
+    --tw-rotate: 0 !important;
+    --tw-scale-x: 1 !important;
+    --tw-scale-y: 1 !important;
   }
 }
