@@ -61,7 +61,7 @@ export function ThemeSelector() {
         aria-label="Change theme"
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted
+        className="flex h-11 w-11 sm:h-8 sm:w-8 items-center justify-center rounded-md text-text-muted
                    hover:text-text hover:bg-surface-muted transition-colors duration-[150ms]"
       >
         <ActiveIcon size={18} />

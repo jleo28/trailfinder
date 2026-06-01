@@ -263,14 +263,6 @@ export default async function TrailDetailPage({ params }: Props) {
           </section>
         )}
 
-        {/* Reviews placeholder */}
-        <section>
-          <h2 className="font-serif text-2xl font-medium text-text mb-4">Reviews</h2>
-          <div className="rounded-lg border border-dashed border-border p-10 text-center">
-            <p className="text-sm text-text-muted">Reviews coming in T-22.</p>
-          </div>
-        </section>
-
         {/* Friends who hiked this */}
         {friendHikers.length > 0 && (
           <section>

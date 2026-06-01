@@ -213,7 +213,7 @@ export default async function FriendsPage({ searchParams }: PageProps) {
                         >
                           <button
                             type="submit"
-                            className="px-3 py-1.5 rounded-md bg-accent text-accent-on text-xs font-medium
+                            className="px-3 py-1.5 min-h-[44px] rounded-md bg-accent text-accent-on text-xs font-medium
                                        hover:bg-accent-hover transition-colors"
                           >
                             Accept
@@ -227,7 +227,7 @@ export default async function FriendsPage({ searchParams }: PageProps) {
                         >
                           <button
                             type="submit"
-                            className="px-3 py-1.5 rounded-md border border-border text-text-muted text-xs
+                            className="px-3 py-1.5 min-h-[44px] rounded-md border border-border text-text-muted text-xs
                                        hover:bg-surface-muted transition-colors"
                           >
                             Decline

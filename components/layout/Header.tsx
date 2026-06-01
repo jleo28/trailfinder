@@ -83,7 +83,7 @@ export function Header({ profile, pendingRequestCount = 0 }: HeaderProps) {
             <button
               onClick={() => window.dispatchEvent(new CustomEvent(OPEN_SEARCH_EVENT))}
               aria-label="Search trails"
-              className="flex sm:hidden h-8 w-8 items-center justify-center rounded-md text-text-muted
+              className="flex sm:hidden h-11 w-11 items-center justify-center rounded-md text-text-muted
                          hover:text-text hover:bg-surface-muted transition-colors duration-[150ms]"
             >
               <Search size={16} strokeWidth={1.5} />
@@ -92,12 +92,12 @@ export function Header({ profile, pendingRequestCount = 0 }: HeaderProps) {
             <ThemeSelector />
             <AuthMenu profile={profile} />
 
-            {/* Mobile hamburger */}
+            {/* Mobile hamburger — 44px tap target */}
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
               aria-expanded={mobileOpen}
-              className="flex md:hidden h-8 w-8 items-center justify-center rounded-md text-text-muted
+              className="flex md:hidden h-11 w-11 items-center justify-center rounded-md text-text-muted
                          hover:text-text hover:bg-surface-muted transition-colors duration-[150ms]"
             >
               <Menu size={18} />
