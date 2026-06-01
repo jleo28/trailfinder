@@ -241,13 +241,13 @@ export default async function TrailDetailPage({ params }: Props) {
             <div className="hidden md:grid grid-cols-[2fr_1fr] gap-2 rounded-xl overflow-hidden" style={{ height: 480 }}>
               <div className="relative">
                 {allPhotos[0] && (
-                  <Image src={allPhotos[0].src} alt={allPhotos[0].alt} fill className="object-cover" />
+                  <Image src={allPhotos[0].src} alt={allPhotos[0].alt} fill loading="lazy" sizes="66vw" className="object-cover" />
                 )}
               </div>
               <div className="grid grid-rows-3 gap-2">
                 {allPhotos.slice(1, 4).map((p, i) => (
                   <div key={i} className="relative">
-                    <Image src={p.src} alt={p.alt} fill className="object-cover" />
+                    <Image src={p.src} alt={p.alt} fill loading="lazy" sizes="33vw" className="object-cover" />
                   </div>
                 ))}
               </div>
@@ -256,7 +256,7 @@ export default async function TrailDetailPage({ params }: Props) {
             <div className="flex md:hidden gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 px-6">
               {allPhotos.map((p, i) => (
                 <div key={i} className="relative aspect-[3/2] w-[80vw] shrink-0 snap-start rounded-lg overflow-hidden bg-surface-muted">
-                  <Image src={p.src} alt={p.alt} fill className="object-cover" />
+                  <Image src={p.src} alt={p.alt} fill loading="lazy" sizes="80vw" className="object-cover" />
                 </div>
               ))}
             </div>
