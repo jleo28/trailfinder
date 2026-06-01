@@ -22,9 +22,21 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const BASE = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://trailfinder.jleo.me"
+).replace(/\/$/, "");
+
 export const metadata: Metadata = {
   title: { default: "TrailFinder", template: "%s · TrailFinder" },
-  description: "Find and log hikes in the LA area.",
+  description:
+    "Browse 35+ hand-curated hiking trails across the Los Angeles area. Log hikes, track adventures, and connect with friends.",
+  metadataBase: new URL(BASE),
+  openGraph: {
+    siteName: "TrailFinder",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 const themeScript = `(function(){
