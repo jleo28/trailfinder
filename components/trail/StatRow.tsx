@@ -37,8 +37,17 @@ export function StatRow({
   ];
 
   return (
-    <p className={cn("font-mono text-sm text-text-muted", className)}>
-      {parts.join("  ·  ")}
-    </p>
+    // flex-wrap so the row breaks cleanly at ·-separators on narrow screens
+    // instead of mid-token overflow
+    <div className={cn("flex flex-wrap items-center gap-x-0 font-mono text-sm text-text-muted", className)}>
+      {parts.map((part, i) => (
+        <span key={i} className="flex items-center">
+          {part}
+          {i < parts.length - 1 && (
+            <span className="mx-1.5 opacity-40" aria-hidden>·</span>
+          )}
+        </span>
+      ))}
+    </div>
   );
 }

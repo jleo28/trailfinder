@@ -28,8 +28,9 @@ export function MapControls({ tileLayer, onTileLayerChange }: Props) {
     map.locate({ setView: true, maxZoom: 14 });
   }
 
+  // 44px minimum tap target on all screen sizes
   const btnClass =
-    "flex items-center justify-center w-9 h-9 hover:bg-surface transition-colors duration-[150ms]";
+    "flex items-center justify-center w-11 h-11 hover:bg-surface transition-colors duration-[150ms]";
 
   return (
     <div
