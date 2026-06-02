@@ -23,6 +23,7 @@ export function HeroSection({ photos }: { photos: string[] }) {
           alt=""
           fill
           priority={i === 0}
+          loading={i === 0 ? undefined : "lazy"}
           sizes="100vw"
           className={[
             "object-cover transition-opacity duration-[1200ms] ease-in-out",

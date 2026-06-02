@@ -66,6 +66,7 @@ export function TrailBrowse({ initialTrails }: { initialTrails: BrowseTrail[] })
     queryKey: ["trails", filters],
     queryFn: () => fetchTrails(filters),
     initialData: initialTrails,
+    staleTime: 5 * 60_000,
   });
 
   const sortedTrails = useMemo(() => {
