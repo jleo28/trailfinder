@@ -1,0 +1,296 @@
+@import "tailwindcss";
+
+/* ─── Static scale tokens ─────────────────────────────────────────────────── */
+/* These become Tailwind utilities: bg-sage-500, text-mushroom-300, etc.       */
+
+@theme {
+  /* Sage */
+  --color-sage-50: #F4F6F1;
+  --color-sage-100: #E8ECE0;
+  --color-sage-200: #D1D9C2;
+  --color-sage-300: #B0BC9C;
+  --color-sage-400: #8B9B76;
+  --color-sage-500: #6E7E5C;
+  --color-sage-600: #57674A;
+  --color-sage-700: #424F38;
+  --color-sage-800: #2F3A29;
+  --color-sage-900: #1F271A;
+
+  /* Mushroom */
+  --color-mushroom-50: #F8F5EF;
+  --color-mushroom-100: #EFEBE1;
+  --color-mushroom-200: #DDD5C5;
+  --color-mushroom-300: #C2B6A0;
+  --color-mushroom-400: #A6987F;
+  --color-mushroom-500: #847762;
+  --color-mushroom-600: #645A48;
+  --color-mushroom-700: #443E32;
+  --color-mushroom-800: #2B271F;
+  --color-mushroom-900: #1A1814;
+
+  /* Stone */
+  --color-stone-100: #F4F4F2;
+  --color-stone-300: #C7C5BF;
+  --color-stone-500: #7E7B73;
+  --color-stone-700: #4B4943;
+  --color-stone-900: #1E1D1A;
+
+  /* Radius — overrides Tailwind defaults */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+}
+
+/* ─── Semantic tokens (theme-switchable) ──────────────────────────────────── */
+/* @theme inline keeps var() references live at runtime so theme switching     */
+/* works: .bg-bg resolves to background-color: var(--bg), not a static value. */
+
+@theme inline {
+  /* Colors */
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-soft: var(--text-soft);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-on: var(--accent-on);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+
+  /* Shadows — theme-aware (warm in light, stark in dark) */
+  --shadow-sm: var(--tf-shadow-sm);
+  --shadow-md: var(--tf-shadow-md);
+  --shadow-lg: var(--tf-shadow-lg);
+  --shadow-xl: var(--tf-shadow-xl);
+
+  /* Typography — references CSS vars injected by next/font on <html> */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* ─── Light mode ─────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #F8F5EF;
+  --bg-elevated: #FDFBF6;
+  --surface: #FFFFFF;
+  --surface-muted: #F3F0E8;
+  --border: #DDD5C5;
+  --border-strong: #C2B6A0;
+  --text: #1F271A;
+  --text-soft: #443E32;
+  --text-muted: #847762;
+  --accent: #6E7E5C;
+  --accent-hover: #57674A;
+  --accent-soft: #E8ECE0;
+  --accent-on: #FFFFFF;
+  --danger: #A14A3A;
+  --warning: #B5854F;
+  --success: #6E7E5C;
+
+  --tf-shadow-sm: 0 1px 2px rgba(31, 39, 26, 0.04);
+  --tf-shadow-md: 0 2px 8px rgba(31, 39, 26, 0.06), 0 1px 2px rgba(31, 39, 26, 0.04);
+  --tf-shadow-lg: 0 12px 32px rgba(31, 39, 26, 0.08), 0 4px 12px rgba(31, 39, 26, 0.04);
+  --tf-shadow-xl: 0 24px 64px rgba(31, 39, 26, 0.12), 0 8px 24px rgba(31, 39, 26, 0.06);
+
+  /* Motion — used directly in CSS, not as Tailwind utilities */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-map: 600ms;
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
+
+[data-theme="dark"] {
+  --bg: #16140F;
+  --bg-elevated: #1F1C16;
+  --surface: #25221B;
+  --surface-muted: #1A1814;
+  --border: #2F2B22;
+  --border-strong: #443E32;
+  --text: #EFEBE1;
+  --text-soft: #C2B6A0;
+  --text-muted: #847762;
+  --accent: #8B9B76;
+  --accent-hover: #B0BC9C;
+  --accent-soft: rgba(139, 155, 118, 0.14);
+  --accent-on: #16140F;
+  --danger: #C76A57;
+  --warning: #C99963;
+  --success: #8B9B76;
+
+  --tf-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --tf-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --tf-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --tf-shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition:
+    background-color var(--duration-slow) var(--ease-out),
+    color var(--duration-slow) var(--ease-out);
+}
+
+/* Fraunces SOFT axis at 50 for warmth */
+.font-serif {
+  font-variation-settings: "SOFT" 50;
+}
+
+/* Glassmorphism — floating UI only (map controls, command palette) */
+.glass {
+  background: rgba(248, 245, 239, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(221, 213, 197, 0.6);
+  box-shadow: var(--tf-shadow-md);
+}
+
+[data-theme="dark"] .glass {
+  background: rgba(22, 20, 15, 0.72);
+  border: 1px solid rgba(68, 62, 50, 0.6);
+}
+
+/* ─── User location marker ───────────────────────────────────────────────── */
+
+.user-location-dot {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.user-location-inner {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #3B82F6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+  z-index: 1;
+}
+
+.user-location-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.18);
+  animation: user-location-pulse 2s ease-out infinite;
+}
+
+@keyframes user-location-pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-location-ring { animation: none; }
+}
+
+/* ─── Form elements ──────────────────────────────────────────────────────── */
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+/* ─── Leaflet overrides ──────────────────────────────────────────────────── */
+
+/* Hide default Leaflet zoom control (we render our own in MapControls) */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Glass popup */
+.glass-popup .leaflet-popup-content-wrapper {
+  background: rgba(253, 251, 246, 0.94);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(221, 213, 197, 0.6);
+  box-shadow: var(--tf-shadow-md);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .glass-popup .leaflet-popup-content-wrapper {
+  background: rgba(31, 28, 22, 0.94);
+  border-color: rgba(68, 62, 50, 0.6);
+}
+
+.glass-popup .leaflet-popup-content {
+  margin: 0;
+  line-height: inherit;
+}
+
+.glass-popup .leaflet-popup-tip-container {
+  margin-top: -1px;
+}
+
+.glass-popup .leaflet-popup-tip {
+  background: rgba(253, 251, 246, 0.94);
+  border: none;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .glass-popup .leaflet-popup-tip {
+  background: rgba(31, 28, 22, 0.94);
+}
+
+.glass-popup .leaflet-popup-close-button {
+  display: none;
+}
+
+/* ── Focus rings — keyboard navigation ───────────────────────────────────── */
+/* Sage accent ring on all focusable elements. :focus-visible means it only  */
+/* appears for keyboard/sequential navigation, never for mouse clicks.        */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Inputs and textareas express focus via their own border + ring treatment.  */
+/* Remove the global outline so they don't double-render a focus indicator.   */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 100ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  /* Disable translate/rotate/scale hover effects — keep opacity transitions.  */
+  /* This targets the Tailwind hover-lift pattern used on cards and stamps.    */
+  *:hover,
+  *:focus {
+    --tw-translate-x: 0 !important;
+    --tw-translate-y: 0 !important;
+    --tw-rotate: 0 !important;
+    --tw-scale-x: 1 !important;
+    --tw-scale-y: 1 !important;
+  }
+}
