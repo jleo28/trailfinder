@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { onboardingSchema, updateProfileSchema } from "@/lib/schemas/profile";
 import type { UpdateProfileInput } from "@/lib/schemas/profile";
 
@@ -103,7 +103,7 @@ export async function deleteAccount(): Promise<{ error: string } | void> {
 
   // Hard-delete the auth user (cascades to profiles via ON DELETE CASCADE).
   // Photos in Storage remain and require manual cleanup via the Supabase dashboard.
-  const { error } = await supabaseAdmin.auth.admin.deleteUser(user.id);
+  const { error } = await getSupabaseAdmin().auth.admin.deleteUser(user.id);
   if (error) {
     // Rare — but if deletion fails, the user is already signed out, which is
     // acceptable. They can contact support for manual cleanup.

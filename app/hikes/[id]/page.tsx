@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { supabaseAdmin as admin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { DifficultyChip } from "@/components/trail/DifficultyChip";
 import { DeleteHikeButton } from "./DeleteHikeButton";
 import { Reactions, type ReactionSummary } from "@/components/hike/Reactions";
@@ -141,6 +141,7 @@ export default async function HikeDetailPage({ params }: Props) {
   const isOwner = user?.id === hike.user_id;
 
   // Fetch photos — use admin to generate signed URLs regardless of who's viewing
+  const admin = getSupabaseAdmin();
   const { data: photos } = await admin
     .from("hike_photos")
     .select("id, storage_path, position, width, height")
