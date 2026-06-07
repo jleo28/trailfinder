@@ -7,11 +7,7 @@ export function Footer() {
         <div>
           <p className="font-serif text-lg text-text mb-1">TrailFinder</p>
           <p className="text-sm text-text-muted">
-            Original CSCI-201 team:{" "}
-            <span className="text-text-soft">
-              Evan Adami, Ibsa Abadiga, Logan Lusher, Lucas Jerry,
-              Malachi Dewitt, Nicolo Naoni, Yaphet Bekele &amp; Joseph Leo
-            </span>
+            A social hiking app for the LA trail community.
           </p>
         </div>
 

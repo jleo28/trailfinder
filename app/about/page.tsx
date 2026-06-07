@@ -38,8 +38,8 @@ export default function AboutPage() {
           About TrailFinder
         </h1>
         <p className="text-base text-text-soft leading-relaxed">
-          TrailFinder is a social hiking app for the Los Angeles trail community —
-          browse trails with an interactive map, log hikes with photos, and share
+          TrailFinder is a social hiking app for the Los Angeles trail community.
+          Browse trails with an interactive map, log hikes with photos, and share
           adventures with friends.
         </p>
       </section>
