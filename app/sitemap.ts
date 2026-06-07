@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 
+export const dynamic = "force-dynamic";
+
 const BASE = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://trailfinder.jleo.me"
 ).replace(/\/$/, "");

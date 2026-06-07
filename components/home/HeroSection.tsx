@@ -50,7 +50,7 @@ export function HeroSection({ photos }: { photos: string[] }) {
           Find your next<br className="hidden sm:block" /> LA trail.
         </h1>
         <p className="text-sm md:text-base text-white/72 mb-8 max-w-sm leading-relaxed">
-          Browse 35+ hand-curated hikes — Griffith to the Gabriels. Log your adventures and share with friends.
+          Browse 35+ hand-curated hikes from Griffith to the Gabriels. Log your adventures and share with friends.
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <Link

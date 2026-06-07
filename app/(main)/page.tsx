@@ -10,7 +10,7 @@ import { getFeedData } from "@/app/feed/page";
 import type { FeedHike } from "@/components/hike/HikeLogCard";
 
 export const metadata: Metadata = {
-  title: "TrailFinder — LA Hiking Trails",
+  title: "TrailFinder: LA Hiking Trails",
   description:
     "Browse 35+ hand-curated hiking trails across the Los Angeles area. Log hikes, track adventures, and connect with friends.",
 };
@@ -168,7 +168,7 @@ export default async function HomePage() {
               Everything in one place
             </h2>
             <p className="text-text-muted text-sm max-w-sm mx-auto">
-              Built for the LA hiking community — not a fitness tracker.
+              Built for the LA hiking community, not a fitness tracker.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
