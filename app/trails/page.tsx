@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export const metadata: Metadata = {
   title: "Browse Trails",
-  description: "Explore hiking trails across the Los Angeles area — Griffith Park, Santa Monica Mountains, San Gabriels, and beyond.",
+  description: "Explore hiking trails across the Los Angeles area: Griffith Park, Santa Monica Mountains, San Gabriels, and beyond.",
 };
 
 interface PageProps {

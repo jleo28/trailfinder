@@ -71,7 +71,7 @@ function Stamp({ trailName, trailSlug, hikedAt, index }: StampData & { index: nu
     <Link
       href={`/trails/${trailSlug}`}
       className="block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-      aria-label={`${trailName} — hiked ${month} ${day} ${year}`}
+      aria-label={`${trailName}, hiked ${month} ${day} ${year}`}
       style={{ position: "relative", zIndex: hovered ? 10 : 1 }}
     >
       <div
