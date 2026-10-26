@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { GuestButton } from "@/components/auth/GuestButton";
 
 export function HeroSection({ photos }: { photos: string[] }) {
   const [idx, setIdx] = useState(0);
@@ -67,6 +68,11 @@ export function HeroSection({ photos }: { photos: string[] }) {
           >
             Get started free
           </Link>
+          <GuestButton
+            className="px-6 py-2.5 rounded-md text-white/85 text-sm font-medium underline-offset-4
+                       hover:text-white hover:underline transition-colors duration-[150ms] disabled:opacity-70"
+            label="Try as guest →"
+          />
         </div>
 
         {/* Rotation dots */}

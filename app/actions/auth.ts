@@ -58,3 +58,20 @@ export async function signInWithGoogle(): Promise<void> {
   if (error || !data.url) redirect("/signin?error=google_failed");
   redirect(data.url);
 }
+
+// One-click demo access for recruiters: signs in to the shared guest account
+// using a server-generated magic-link token, so no password ever exists.
+export async function signInAsGuest(): Promise<void> {
+  let failed = false;
+  try {
+    const { createGuestToken } = await import("@/lib/demo/guest");
+    const token_hash = await createGuestToken();
+    const supabase = await createClient();
+    const { error } = await supabase.auth.verifyOtp({ type: "magiclink", token_hash });
+    if (error) throw error;
+  } catch (err) {
+    console.error("[guest] sign-in failed", err);
+    failed = true;
+  }
+  redirect(failed ? "/signin?error=guest_failed" : "/feed");
+}

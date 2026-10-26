@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
+import { resetDemoWorld } from "@/lib/demo/guest";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,8 +24,11 @@ export async function GET(req: Request) {
 
     if (error) throw error;
 
-    console.log(`[cron] keep-alive ok — ${count} trails`);
-    return Response.json({ ok: true, trails: count, ts: new Date().toISOString() });
+    // Wipe whatever guests changed and reseed the demo feed.
+    await resetDemoWorld();
+
+    console.log(`[cron] keep-alive ok — ${count} trails, demo reset`);
+    return Response.json({ ok: true, trails: count, demoReset: true, ts: new Date().toISOString() });
   } catch (err) {
     console.error("[cron] keep-alive failed", err);
     return Response.json({ ok: false, error: String(err) }, { status: 500 });

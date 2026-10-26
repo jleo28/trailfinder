@@ -6,11 +6,13 @@ import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signInWithGoogle } from "@/app/actions/auth";
+import { GuestButton } from "@/components/auth/GuestButton";
 import { signInSchema, type SignInInput } from "@/lib/schemas/auth";
 
 const URL_ERRORS: Record<string, string> = {
   google_failed: "Could not connect to Google. Please try again.",
   auth_failed: "Authentication failed. Please try again.",
+  guest_failed: "The guest demo is waking up. Give it a few seconds and try again.",
 };
 
 // Wrapped in Suspense because useSearchParams() requires it in Next.js App Router
@@ -43,6 +45,12 @@ function SignInContent() {
       <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg">
         <h1 className="font-serif text-2xl text-text mb-1">Welcome back</h1>
         <p className="text-sm text-text-muted mb-6">Sign in to your TrailFinder account.</p>
+
+        <GuestButton
+          className="mb-3 flex w-full items-center justify-center rounded-md bg-accent h-10 text-sm font-medium
+                     text-accent-on hover:bg-accent-hover transition-colors duration-[150ms] disabled:opacity-70"
+          label="Try as guest, no account needed"
+        />
 
         <form action={signInWithGoogle}>
           <button

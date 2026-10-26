@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { onboardingSchema, updateProfileSchema } from "@/lib/schemas/profile";
 import type { UpdateProfileInput } from "@/lib/schemas/profile";
+import { isGuestEmail } from "@/lib/demo/guest";
 
 export async function checkUsername(username: string): Promise<{ available: boolean }> {
   const supabase = await createClient();
@@ -97,6 +98,7 @@ export async function deleteAccount(): Promise<{ error: string } | void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
+  if (isGuestEmail(user.email)) return { error: "The guest demo account can't be deleted." };
 
   // Sign out first so the session cookie is cleared before the user row is gone
   await supabase.auth.signOut();
